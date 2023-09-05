@@ -4,11 +4,13 @@ from bs4 import BeautifulSoup
 # criando cabeçalho da request
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                          "Chrome/114.0.0.0 Safari/537.36 OPR/100.0.0.0"}
-
+qtd_pessoas = 4
+qtd_quartos = 1
 
 def soup(html_content):
     # Cria um objeto BeautifulSoup que pega o conteúdo da resposta e analisa/organiza
     sopa = BeautifulSoup(html_content, 'html.parser')
+
     # Encontrando um elementro específico na pagina
     precos = sopa.find_all("span", class_="f6431b446c fbd1d3018c e729ed5ab6")
     for cada in precos:
@@ -22,7 +24,7 @@ def criar_link(checkin, checkout):
           f'6041a259ee6&aid=304142&ss=Cabo+Frio%2C+Estado+do+Rio+de+Janeiro%2C+Brasil&efdco=1&lang=pt-br&sb=1&src_elem=s' \
           f'b&dest_id=-632162&dest_type=city&ac_position=0&ac_click_type=b&ac_langcode=xb&ac_suggestion_list_length=5&' \
           f'search_selected=true&search_pageview_id=3e7a53bb85860208&ac_meta=GhAzZTdhNTNiYjg1ODYwMjA4IAAoATICeGI6CUNhYm8' \
-          f'gRnJpb0AASgBQAA%3D%3D&checkin={checkin}&checkout={checkout}&group_adults=4&no_rooms=1&group_children=0&sb' \
+          f'gRnJpb0AASgBQAA%3D%3D&checkin={checkin}&checkout={checkout}&group_adults={qtd_pessoas}&no_rooms={qtd_quartos}&group_children=0&sb' \
           f'_travel_purpose=leisure&order=price'
 
     return url
@@ -63,7 +65,7 @@ def menu():
 
 def escolher_datas():
     # A = ANO , M = MES , D = DIA
-    mes = int(input('Escolha o mês [MM] : '))
+    mes = str(input('Escolha o mês [MM] : '))
     ano = int(input('Qual o ano [AAAA] : '))
     dia_entrada = int(input('Qual o dia de entrada [DD] ? '))
     dia_saida = int(input('Qual o dia de saída [DD] ? '))
@@ -82,17 +84,15 @@ def escolher_mes():
     dia_saida = 3
     qtd_dias_mes = {'01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30, '07': 31,
                     '08': 31, '09': 30, '10': 31, '11': 30, '12': 31}
-    checkin = f'{ano}-{mes}-{dia_entrada}'
-    checkout = f'{ano}-{mes}-{dia_saida}'
-    fazer_requisicao(checkin, checkout)
     while dia_saida < qtd_dias_mes[mes]:
         print(f'Dia de entrada: {dia_entrada} / Dia de saída: {dia_saida} > PREÇOS: ')
         print('-=' * 15)
-        dia_saida += 2
-        dia_entrada += 2
         checkin = f'{ano}-{mes}-{dia_entrada}'
         checkout = f'{ano}-{mes}-{dia_saida}'
         fazer_requisicao(checkin, checkout)
+        dia_saida += 2
+        dia_entrada += 2
+
 
 
 menu()
