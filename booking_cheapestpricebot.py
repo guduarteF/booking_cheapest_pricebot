@@ -4,8 +4,39 @@ from bs4 import BeautifulSoup
 # criando cabeçalho da request
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                          "Chrome/114.0.0.0 Safari/537.36 OPR/100.0.0.0"}
-qtd_pessoas = 4
-qtd_quartos = 1
+qtd_adultos_inicial = 4
+qtd_criancas_inicial = 0
+qtd_quartos_inicial = 1
+
+
+def criar_link(checkin, checkout, qtd_adultos, qtd_criancas, qtd_quartos):
+    # criando o link
+    url = f'https://www.booking.com/searchresults.pt-br.html?label=gen173nr-1BCAEoggI46AdIM1gEaCCIAQG' \
+          f'YAS24ARfIARXYAQHoAQGIAgGoAgO4AvfbvKcGwAIB0gIkNjU0ZjM4N2EtYjk0Yi00Yjk1LThmOGYtYTQwMGU3MmUw' \
+          f'Mzg52AIF4AIB&sid=3dfff8df8a2dc02f014946041a259ee6&aid=304142&ss' \
+          f'=Cabo+Frio%2C+Estado+do+Rio+de+Janeiro%2C+Brasil&efdco=1&lang=pt-br' \
+          f'&sb=1&src_elem=sb&dest_id=-632162&dest_type=city&ac_position=0&' \
+          f'ac_click_type=b&ac_langcode=xb&ac_suggestion_list_length=5&search_selected=true' \
+          f'&search_pageview_id=3e7a53bb85860208&ac_meta=GhAzZTdhNTNiYjg1ODYwMjA4IAAoATICeGI6CUNhYm8gRnJ' \
+          f'pb0AASgBQAA%3D%3D&checkin={checkin}&checkout={checkout}&group_adults={qtd_adultos}&no_rooms={qtd_quartos}' \
+          f'&group_children={qtd_criancas}&sb_travel_purpose=leisure&order=price'
+
+    return url
+
+
+def alterar_qtd_adultos():
+    qtd_adultos_alt = int(input('A busca será para quantos adultos ? '))
+    return qtd_adultos_alt
+
+
+def alterar_qtd_criancas():
+    qtd_criancas_alt = int(input('A busca será para quantas crianças ? '))
+    return qtd_criancas_alt
+
+
+def alterar_qtd_quartos():
+    qtd_quartos_alt = int(input('Quantos quartos ? '))
+    return qtd_quartos_alt
 
 def soup(html_content):
     # Cria um objeto BeautifulSoup que pega o conteúdo da resposta e analisa/organiza
@@ -17,17 +48,7 @@ def soup(html_content):
         print(cada.get_text())
 
 
-def criar_link(checkin, checkout):
-    # criando o link
-    url = f'https://www.booking.com/searchresults.pt-br.html?label=gen173nr-1BCAEoggI46AdIM1gEaCCIAQGYAS24ARfIARXYAQHoAQ' \
-          f'GIAgGoAgO4AvfbvKcGwAIB0gIkNjU0ZjM4N2EtYjk0Yi00Yjk1LThmOGYtYTQwMGU3MmUwMzg52AIF4AIB&sid=3dfff8df8a2dc02f01494' \
-          f'6041a259ee6&aid=304142&ss=Cabo+Frio%2C+Estado+do+Rio+de+Janeiro%2C+Brasil&efdco=1&lang=pt-br&sb=1&src_elem=s' \
-          f'b&dest_id=-632162&dest_type=city&ac_position=0&ac_click_type=b&ac_langcode=xb&ac_suggestion_list_length=5&' \
-          f'search_selected=true&search_pageview_id=3e7a53bb85860208&ac_meta=GhAzZTdhNTNiYjg1ODYwMjA4IAAoATICeGI6CUNhYm8' \
-          f'gRnJpb0AASgBQAA%3D%3D&checkin={checkin}&checkout={checkout}&group_adults={qtd_pessoas}&no_rooms={qtd_quartos}&group_children=0&sb' \
-          f'_travel_purpose=leisure&order=price'
 
-    return url
 
 
 def fazer_requisicao(checkin, checkout):
@@ -39,9 +60,9 @@ def fazer_requisicao(checkin, checkout):
 
 
 def menu():
-    print('-=' * 25)
+    print('==' * 25)
     print('{:^50}'.format('Verifique os 25 menores preços booking.com:'))
-    print('-=' * 25)
+    print('==' * 25)
     print('FILTROS ATUAIS: Estado > Rj / Cidade > Cabo Frio / Quartos > 1 / Adultos > 4 / '
           'Crianças > 0 / Ano > 2023')
     print('-=' * 25)
