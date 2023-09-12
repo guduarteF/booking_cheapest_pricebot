@@ -1,5 +1,59 @@
 import requests
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+from time import sleep
+
+# formato calend geral
+# 01 out 2023   -> DD mes AAAA
+
+# PESO
+"""
+ECONOMICS 180
+PARAISO 180
+YOUNG 185
+SLIM 195
+EXCLUSIVE 205
+CONFORT 230
+FAMILY 243
+DUNAS 250
+OCEAN 250
+FORT 280
+"""
+
+
+# def selecionar_mes():
+
+
+def entrar_e_logar_no_site():
+    servico = Service(ChromeDriverManager().install())
+    navegador = webdriver.Chrome(service=servico)
+    # Request da conexão
+    navegador.get("https://tnp.stays.com.br/i/home")
+    sleep(5)
+    # Prenchimento de login
+    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').send_keys("carloseduardoferre@gmail.com")
+    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("Rosy03011931@")
+    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
+    sleep(5)
+    calendariogeral()
+
+
+def calendariogeral():
+    # Seleciona o menu de opções
+    navegador.find_element('xpath', '//*[@id="leftmenu"]/div[1]/ul/li/a/i').click()
+    sleep(3)
+    # Calendário Geral
+    navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
+    sleep(3)
+    escolher_casa()
+
+    input()
+
+
+# def escolher_casa():
+
 
 # criando cabeçalho da request
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
