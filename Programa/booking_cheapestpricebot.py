@@ -22,13 +22,13 @@ OCEAN 250
 FORT 280
 """
 
-
+servico = Service(ChromeDriverManager().install())
+navegador = webdriver.Chrome(service=servico)
 # def selecionar_mes():
 
 
 def entrar_e_logar_no_site():
-    servico = Service(ChromeDriverManager().install())
-    navegador = webdriver.Chrome(service=servico)
+
     # Request da conexão
     navegador.get("https://tnp.stays.com.br/i/home")
     sleep(5)
@@ -41,13 +41,14 @@ def entrar_e_logar_no_site():
 
 
 def calendariogeral():
+
     # Seleciona o menu de opções
     navegador.find_element('xpath', '//*[@id="leftmenu"]/div[1]/ul/li/a/i').click()
     sleep(3)
     # Calendário Geral
     navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
     sleep(3)
-    escolher_casa()
+    # escolher_casa()
 
     input()
 
