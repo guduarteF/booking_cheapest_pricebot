@@ -24,11 +24,12 @@ FORT 280
 
 servico = Service(ChromeDriverManager().install())
 navegador = webdriver.Chrome(service=servico)
+dia_de_entrada = 1
+dia_de_saida = 31
 # def selecionar_mes():
 
 
-def entrar_e_logar_no_site():
-
+def logar_no_site():
     # Request da conexão
     navegador.get("https://tnp.stays.com.br/i/home")
     sleep(5)
@@ -48,12 +49,63 @@ def calendariogeral():
     # Calendário Geral
     navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
     sleep(3)
-    # escolher_casa()
+    escolher_casa()
 
     input()
 
 
-# def escolher_casa():
+def entrada_das_datas():
+    # Data de entrada
+    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[1]/div/input[1]')\
+        .send_keys(f"{dia_de_entrada} {mes_abrev} {ano}")
+    # Data de saída
+    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[2]/div/input[1]')\
+        .send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
+
+
+def young():
+    # Clica no +
+    navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/'
+                                    'tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
+    sleep(3)
+    # Clica no preço
+    navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/tr/td[3]'
+                                    '/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
+    sleep(1)
+
+
+def escolher_casa():
+    print('Deseja alterar o preço de qual casa ?')
+    print('1 - YOUNG')
+    print('2 - CONFORT')
+    print('3 - ECONOMICS')
+    print('4 - FAMILY')
+    print('5 - EXCLUSIVE')
+    print('6 - SLIM')
+    print('7 - DUNAS')
+    print('8 - FORT')
+    print('9 - OCEAN')
+    opcao = int(input('Digite sua opção: '))
+    if opcao == 1:
+        young()
+    """
+    elif opcao == 2:
+    # confort()
+    elif opcao == 3:
+     # economics()
+    elif opcao == 4:
+     # family()
+    elif opcao == 5:
+     # exclusive()
+    elif opcao == 6:
+     # slim()
+    elif opcao == 7:
+     # dunas()
+    elif opcao == 8:
+     # fort()
+    elif opcao == 9:
+     # ocean()
+     """
 
 
 # criando cabeçalho da request
@@ -64,7 +116,7 @@ qtd_adultos_inicial = 4
 qtd_quartos_inicial = 1
 
 
-def criar_link(checkin, checkout, qtd_adultos=4, qtd_quartos=1):
+def criar_link(_checkin, _checkout, qtd_adultos=4, qtd_quartos=1):
     # criando o link
     url = f'https://www.booking.com/searchresults.pt-br.html?label=gen173nr-1BCAEoggI46AdIM1gEaCCIAQG' \
           f'YAS24ARfIARXYAQHoAQGIAgGoAgO4AvfbvKcGwAIB0gIkNjU0ZjM4N2EtYjk0Yi00Yjk1LThmOGYtYTQwMGU3MmUw' \
@@ -73,8 +125,8 @@ def criar_link(checkin, checkout, qtd_adultos=4, qtd_quartos=1):
           f'&sb=1&src_elem=sb&dest_id=-632162&dest_type=city&ac_position=0&' \
           f'ac_click_type=b&ac_langcode=xb&ac_suggestion_list_length=5&search_selected=true' \
           f'&search_pageview_id=3e7a53bb85860208&ac_meta=GhAzZTdhNTNiYjg1ODYwMjA4IAAoATICeGI6CUNhYm8gRnJ' \
-          f'pb0AASgBQAA%3D%3D&checkin={checkin}&checkout={checkout}&group_adults={qtd_adultos}&no_rooms={qtd_quartos}' \
-          f'&group_children=0&sb_travel_purpose=leisure&order=price'
+          f'pb0AASgBQAA%3D%3D&checkin={_checkin}&checkout={_checkout}&group_adults={qtd_adultos}&' \
+          f'no_rooms={qtd_quartos}&group_children=0&sb_travel_purpose=leisure&order=price'
 
     return url
 
@@ -104,9 +156,9 @@ def soup(html_content):
         print(cada.get_text())
 
 
-def fazer_requisicao(checkin, checkout):
+def fazer_requisicao(_checkin, _checkout):
     # Faz uma requisição para a página web
-    response = requests.get(criar_link(checkin, checkout, qtd_adultos_inicial, qtd_quartos_inicial), headers=headers)
+    response = requests.get(criar_link(_checkin, _checkout, qtd_adultos_inicial, qtd_quartos_inicial), headers=headers)
     # condensa o conteúdo da resposta
     html_content = response.content
     soup(html_content)
@@ -116,11 +168,11 @@ def menu():
     while True:
         print(f'FILTROS ATUAIS: Estado > Rj / Cidade > Cabo Frio / Quartos > {qtd_quartos_inicial} /'
               f' Adultos > {qtd_adultos_inicial} / Crianças > 0 / Ano > {ano} /'
-              f'Mês > {mes}')
+              f'Mês > {mes_num}')
         print('-=' * 30)
         print('{:^30}'.format('-=MENU=-'))
         print('1- [Escolha as datas (CHECKIN E CHECKOUT)] ')
-        print(f'2- [Calcular TODOS os preços desse MÊS {mes} desse ano {ano}] ')
+        print(f'2- [TODOS os preços desse MÊS {mes_num} desse ano {ano}] ')
         print('3- [Altere a quantidade de adultos] ')
         print('4- [Altere a quantidade de quartos] ')
         print('5- [Fechar programa]')
@@ -143,9 +195,7 @@ def menu():
 def escolher_datas():
     dia_entrada = int(input('Qual o dia de entrada [DD] ? '))
     dia_saida = int(input('Qual o dia de saída [DD] ? '))
-    checkin = f'{ano}-{mes}-{dia_entrada}'
-    checkout = f'{ano}-{mes}-{dia_saida}'
-    fazer_requisicao(checkin, checkout)
+    fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
 
 
 def listar_precos_mes():
@@ -155,13 +205,25 @@ def listar_precos_mes():
     qtd_dias_mes = {'01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30, '07': 31,
                     '08': 31, '09': 30, '10': 31, '11': 30, '12': 31}
 
-    while dia_saida < qtd_dias_mes[mes]:
-        print(f'Dia de entrada: {dia_entrada} / Dia de saída: {dia_saida} > PREÇOS: ')
-        checkin = f'{ano}-{mes}-{dia_entrada}'
-        checkout = f'{ano}-{mes}-{dia_saida}'
-        fazer_requisicao(checkin, checkout)
+    while dia_saida < qtd_dias_mes[mes_num]:
+        print(f'Checkin: {checkin(ano,mes_num,dia_entrada)}')
+        print(f'Checkout: {checkout(ano,mes_num,dia_saida)}')
+        print('-' * 60)
+        fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
         dia_saida += 2
         dia_entrada += 2
+
+
+def checkin(_ano, _mes_num, _dia_entrada):
+    global dia_de_entrada
+    dia_de_entrada = _dia_entrada
+    return f'{_ano}-{_mes_num}-{_dia_entrada}'
+
+
+def checkout(_ano, _mes_num, _dia_saida):
+    global dia_de_saida
+    dia_de_saida = _dia_saida
+    return f'{_ano}-{_mes_num}-{_dia_saida}'
 
 
 def bemvindo():
@@ -170,7 +232,10 @@ def bemvindo():
     print('=' * 60)
 
 
-bemvindo()
-mes = str(input('Escolha o mês [MM] : ').lower())
-ano = int(input('Escolha o ano[AAAA] : '))
-menu()
+# bemvindo()
+mes_num = 10  # str(input('Escolha o mês [MM] : '))
+mes_abrev = 'out'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
+ano = '2023'  # int(input('Escolha o ano[AAAA] : '))
+# menu()
+logar_no_site()
+# entrada_das_datas()
