@@ -4,6 +4,8 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from time import sleep
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 # formato calend geral
 # 01 out 2023   -> DD mes AAAA
@@ -32,7 +34,7 @@ dia_de_saida = 31
 def logar_no_site():
     # Request da conexão
     navegador.get("https://tnp.stays.com.br/i/home")
-    sleep(5)
+    sleep(10)
     # Prenchimento de login
     navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').send_keys("carloseduardoferre@gmail.com")
     navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("Rosy03011931@")
@@ -45,33 +47,53 @@ def calendariogeral():
 
     # Seleciona o menu de opções
     navegador.find_element('xpath', '//*[@id="leftmenu"]/div[1]/ul/li/a/i').click()
-    sleep(3)
+    sleep(6)
     # Calendário Geral
     navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
-    sleep(3)
+    sleep(6)
     escolher_casa()
-
-    input()
 
 
 def entrada_das_datas():
+    sleep(6)
     # Data de entrada
+    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[1]/div/input[1]').clear()
+    sleep(6)
     navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[1]/div/input[1]')\
         .send_keys(f"{dia_de_entrada} {mes_abrev} {ano}")
+
+    sleep(6)
     # Data de saída
+    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[2]/div/input[1]').clear()
+    sleep(6)
     navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[2]/div/input[1]')\
         .send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
+    sleep(1)
+
+    # Atualizar
+    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+    sleep(1)
+    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+    input()
+    # navegador.find_element('xpath', '//*[@id="filterform"]/div[5]/div/div[2]/button').click()
+    # navegador.find_element('//*[@id="left-menu-block"]/div[1])').click()
+
+
+
+
 
 
 def young():
-    # Clica no +
+    sleep(3)
+    # Clica no + (expandir) para exibição dos preços
     navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/'
                                     'tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
-    sleep(3)
+    sleep(6)
     # Clica no preço
     navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/tr/td[3]'
                                     '/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
-    sleep(1)
+    sleep(3)
+    # Altera o checkin e checkout
 
 
 def escolher_casa():
@@ -85,10 +107,11 @@ def escolher_casa():
     print('7 - DUNAS')
     print('8 - FORT')
     print('9 - OCEAN')
-    opcao = int(input('Digite sua opção: '))
+    entrada_das_datas()
+    young()
+    """ opcao = int(input('Digite sua opção: '))
     if opcao == 1:
-        young()
-    """
+        young() 
     elif opcao == 2:
     # confort()
     elif opcao == 3:
@@ -238,4 +261,5 @@ mes_abrev = 'out'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')
 ano = '2023'  # int(input('Escolha o ano[AAAA] : '))
 # menu()
 logar_no_site()
+input()
 # entrada_das_datas()
