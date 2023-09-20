@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from time import sleep
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 
 # formato calend geral
 # 01 out 2023   -> DD mes AAAA
@@ -44,14 +45,14 @@ def logar_no_site():
 
 
 def calendariogeral():
-
     # Seleciona o menu de opções
     navegador.find_element('xpath', '//*[@id="leftmenu"]/div[1]/ul/li/a/i').click()
     sleep(6)
     # Calendário Geral
     navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
     sleep(6)
-    escolher_casa()
+
+    entrada_das_datas()
 
 
 def entrada_das_datas():
@@ -74,13 +75,28 @@ def entrada_das_datas():
     ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
     sleep(1)
     ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
-    input()
-    # navegador.find_element('xpath', '//*[@id="filterform"]/div[5]/div/div[2]/button').click()
-    # navegador.find_element('//*[@id="left-menu-block"]/div[1])').click()
+
+    # mudar preço
+    young()
 
 
+def alterarpreco():
+    sleep(3)
+    navegador.find_element('xpath', '//*[@id="rates-block"]/div[1]/div[2]/div/input')\
+        .send_keys('160')
+    sleep(6)
+    navegador.find_element(By.CLASS_NAME, 'btn-primary').click()
+    alterardata()
 
 
+def alterardata():
+    sleep(6)
+    # Clica no preço
+    navegador.find_element(By.CLASS_NAME, 'fc-highlight').click()
+    sleep(6)
+    navegador.find_element(By.CLASS_NAME, 'form-control').send_keys(f"{dia_de_entrada + 1} {mes_abrev} {ano}")
+    sleep(6)
+    navegador.find_element(By.NAME, 'to').send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
 
 
 def young():
@@ -93,7 +109,8 @@ def young():
     navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/tr/td[3]'
                                     '/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
     sleep(3)
-    # Altera o checkin e checkout
+
+    alterarpreco()
 
 
 def escolher_casa():
@@ -108,7 +125,7 @@ def escolher_casa():
     print('8 - FORT')
     print('9 - OCEAN')
     entrada_das_datas()
-    young()
+
     """ opcao = int(input('Digite sua opção: '))
     if opcao == 1:
         young() 
@@ -182,6 +199,7 @@ def soup(html_content):
 def fazer_requisicao(_checkin, _checkout):
     # Faz uma requisição para a página web
     response = requests.get(criar_link(_checkin, _checkout, qtd_adultos_inicial, qtd_quartos_inicial), headers=headers)
+
     # condensa o conteúdo da resposta
     html_content = response.content
     soup(html_content)
@@ -256,7 +274,7 @@ def bemvindo():
 
 
 # bemvindo()
-mes_num = 10  # str(input('Escolha o mês [MM] : '))
+mes_num = '10'  # str(input('Escolha o mês [MM] : '))
 mes_abrev = 'out'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
 ano = '2023'  # int(input('Escolha o ano[AAAA] : '))
 # menu()
