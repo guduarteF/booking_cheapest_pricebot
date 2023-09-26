@@ -29,6 +29,7 @@ servico = Service(ChromeDriverManager().install())
 navegador = webdriver.Chrome(service=servico)
 dia_de_entrada = 1
 dia_de_saida = 31
+umavez = False
 # def selecionar_mes():
 
 
@@ -38,10 +39,9 @@ def logar_no_site():
     sleep(10)
     # Prenchimento de login
     navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').send_keys("carloseduardoferre@gmail.com")
-    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("Rosy03011931@")
+    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("*******")
     navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
     sleep(5)
-    calendariogeral()
 
 
 def calendariogeral():
@@ -51,8 +51,6 @@ def calendariogeral():
     # Calendário Geral
     navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
     sleep(6)
-
-    entrada_das_datas()
 
 
 def entrada_das_datas():
@@ -76,41 +74,58 @@ def entrada_das_datas():
     sleep(1)
     ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
 
-    # mudar preço
-    young()
 
-
-def alterarpreco():
+def alterarpreco(_price):
+    # Altera o valor do preço base
     sleep(3)
     navegador.find_element('xpath', '//*[@id="rates-block"]/div[1]/div[2]/div/input')\
-        .send_keys('160')
+        .send_keys(_price)
     sleep(6)
     navegador.find_element(By.CLASS_NAME, 'btn-primary').click()
-    alterardata()
 
 
-def alterardata():
+def alterardata(_checkin, _checkout):
     sleep(6)
-    # Clica no preço
-    navegador.find_element(By.CLASS_NAME, 'fc-highlight').click()
-    sleep(6)
-    navegador.find_element(By.CLASS_NAME, 'form-control').send_keys(f"{dia_de_entrada + 1} {mes_abrev} {ano}")
-    sleep(6)
-    navegador.find_element(By.NAME, 'to').send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
+    # In
+    # Clear
+    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[1]/div/input').clear()
+    sleep(3)
+    # Preenche a data de entrada
+    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[1]/div/'
+                                     'input').send_keys(f"{_checkin} {mes_abrev} {ano}")
+    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+    sleep(3)
+
+    # Out
+    # Clear
+    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[2]/div/input').clear()
+    sleep(3)
+    # Preenche a data de saída
+    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[2]/div/'
+                                     'input').send_keys(f"{_checkout} {mes_abrev} {ano}")
+    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
 
 
 def young():
     sleep(3)
-    # Clica no + (expandir) para exibição dos preços
-    navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/'
-                                    'tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
-    sleep(6)
-    # Clica no preço
-    navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/tr/td[3]'
-                                    '/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
-    sleep(3)
-
-    alterarpreco()
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/'
+                                        'tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
+        sleep(3)
+        # Clica no preço
+        navegador.find_element('xpath',
+                               '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/tbody'
+                               '/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
+        umavez = True
+    else:
+        sleep(6)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[20]'
+                                         '/div').click()
+        sleep(3)
 
 
 def escolher_casa():
@@ -184,16 +199,19 @@ def alterar_qtd_quartos():
 
 
 def soup(html_content):
+    todos_os_precos = list()
     # Cria um objeto BeautifulSoup que pega o conteúdo da resposta e analisa/organiza
     sopa = BeautifulSoup(html_content, 'html.parser')
 
     # Encontrando um elementro específico na pagina
     precos = sopa.find_all("span", class_="f6431b446c fbd1d3018c e729ed5ab6")
 
-    print('-=' * 30)
     print('Lista de preços (Ordem Crescente) :')
     for cada in precos:
+        todos_os_precos.append(cada.get_text()[3:9])
         print(cada.get_text())
+    print(todos_os_precos)
+    alterarpreco(todos_os_precos[posicao])
 
 
 def fazer_requisicao(_checkin, _checkout):
@@ -247,9 +265,11 @@ def listar_precos_mes():
                     '08': 31, '09': 30, '10': 31, '11': 30, '12': 31}
 
     while dia_saida < qtd_dias_mes[mes_num]:
+        print('-' * 60)
         print(f'Checkin: {checkin(ano,mes_num,dia_entrada)}')
         print(f'Checkout: {checkout(ano,mes_num,dia_saida)}')
-        print('-' * 60)
+        young()
+        alterardata(dia_entrada, dia_saida)
         fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
         dia_saida += 2
         dia_entrada += 2
@@ -277,7 +297,9 @@ def bemvindo():
 mes_num = '10'  # str(input('Escolha o mês [MM] : '))
 mes_abrev = 'out'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
 ano = '2023'  # int(input('Escolha o ano[AAAA] : '))
-# menu()
+posicao = 5  # input('Em qual posição da lista você deseja estar ?')
 logar_no_site()
+calendariogeral()
+menu()
 input()
 # entrada_das_datas()
