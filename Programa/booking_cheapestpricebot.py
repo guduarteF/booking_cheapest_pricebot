@@ -39,7 +39,7 @@ def logar_no_site():
     sleep(10)
     # Prenchimento de login
     navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').send_keys("carloseduardoferre@gmail.com")
-    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("*******")
+    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("******")
     navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
     sleep(5)
 
@@ -208,7 +208,10 @@ def soup(html_content):
 
     print('Lista de preços (Ordem Crescente) :')
     for cada in precos:
-        todos_os_precos.append(cada.get_text()[3:9])
+        global dia_de_entrada
+        global dia_de_saida
+        divisor = dia_de_saida - dia_de_entrada
+        todos_os_precos.append((float(cada.get_text()[3:9])/divisor))
         print(cada.get_text())
     print(todos_os_precos)
     alterarpreco(todos_os_precos[posicao])
@@ -254,7 +257,10 @@ def menu():
 def escolher_datas():
     dia_entrada = int(input('Qual o dia de entrada [DD] ? '))
     dia_saida = int(input('Qual o dia de saída [DD] ? '))
+    young()
+    alterardata(dia_entrada, dia_saida)
     fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
+
 
 
 def listar_precos_mes():
@@ -294,8 +300,8 @@ def bemvindo():
 
 
 # bemvindo()
-mes_num = '10'  # str(input('Escolha o mês [MM] : '))
-mes_abrev = 'out'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
+mes_num = '11'  # str(input('Escolha o mês [MM] : '))
+mes_abrev = 'nov'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
 ano = '2023'  # int(input('Escolha o ano[AAAA] : '))
 posicao = 5  # input('Em qual posição da lista você deseja estar ?')
 logar_no_site()
