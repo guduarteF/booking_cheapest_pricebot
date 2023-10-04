@@ -36,35 +36,43 @@ umavez = False
 def logar_no_site():
     # Request da conexão
     navegador.get("https://tnp.stays.com.br/i/home")
-    sleep(10)
+    sleep(1)
     # Prenchimento de login
-    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').send_keys("carloseduardoferre@gmail.com")
-    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("******")
-    navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
-    sleep(5)
+    try:
+        (navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').
+         send_keys("carloseduardoferre@gmail.com"))
+        navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("******")
+        navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
+    except Exception as erro:
+        print(f'O erro foi {erro.__class__}')
+    sleep(3)
 
 
 def calendariogeral():
     # Seleciona o menu de opções
     navegador.find_element('xpath', '//*[@id="leftmenu"]/div[1]/ul/li/a/i').click()
-    sleep(6)
+    sleep(3)
     # Calendário Geral
-    navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
-    sleep(6)
+    try:
+        navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
+    except Exception as erro:
+        print(f'Problema encontrado foi {erro.__class__}')
+
+    sleep(3)
 
 
 def entrada_das_datas():
-    sleep(6)
+    sleep(3)
     # Data de entrada
     navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[1]/div/input[1]').clear()
-    sleep(6)
+    sleep(3)
     navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[1]/div/input[1]')\
         .send_keys(f"{dia_de_entrada} {mes_abrev} {ano}")
 
-    sleep(6)
+    sleep(3)
     # Data de saída
     navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[2]/div/input[1]').clear()
-    sleep(6)
+    sleep(3)
     navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[2]/div/input[1]')\
         .send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
     sleep(1)
@@ -80,12 +88,12 @@ def alterarpreco(_price):
     sleep(3)
     navegador.find_element('xpath', '//*[@id="rates-block"]/div[1]/div[2]/div/input')\
         .send_keys(_price)
-    sleep(6)
+    sleep(3)
     navegador.find_element(By.CLASS_NAME, 'btn-primary').click()
 
 
 def alterardata(_checkin, _checkout):
-    sleep(6)
+    sleep(3)
     # In
     # Clear
     navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[1]/div/input').clear()
@@ -120,7 +128,7 @@ def young():
                                '/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
         umavez = True
     else:
-        sleep(6)
+        sleep(3)
         # Clica no preço ( HIGHLIGHT )
         navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
                                          'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[20]'
@@ -262,7 +270,6 @@ def escolher_datas():
     fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
 
 
-
 def listar_precos_mes():
     dia_entrada = 1
     dia_saida = 3
@@ -299,11 +306,11 @@ def bemvindo():
     print('=' * 60)
 
 
-# bemvindo()
-mes_num = '11'  # str(input('Escolha o mês [MM] : '))
-mes_abrev = 'nov'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
-ano = '2023'  # int(input('Escolha o ano[AAAA] : '))
-posicao = 5  # input('Em qual posição da lista você deseja estar ?')
+bemvindo()
+mes_num = str(input('Escolha o mês [MM] : '))
+mes_abrev = str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
+ano = int(input('Escolha o ano[AAAA] : '))
+posicao = int(input('Em qual posição da lista você deseja estar ?'))
 logar_no_site()
 calendariogeral()
 menu()
