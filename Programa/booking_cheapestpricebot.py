@@ -306,21 +306,32 @@ def checkout(_ano, _mes_num, _dia_saida):
     dia_de_saida = _dia_saida
     return f'{_ano}-{_mes_num}-{_dia_saida}'
 
-
+# Inicio da janela
 janela = Tk()
+#titulo
 janela.title("Programa para listar os 25 menores preços Cabo Frio - Rj")
+# txt 1
 texto_orientacao = Label(janela, text=f'FILTROS ATUAIS: Estado > Rj / Cidade > Cabo Frio / Quartos > {qtd_quartos_inicial} Adultos > {qtd_adultos_inicial} / Crianças > 0 / Ano > {ano} Mês > {mes_num}')
 texto_orientacao.grid(column=0, row=0)
-
-texto_orientacao2 = Label(janela, text="yyy")
-texto_orientacao2.grid(column=1, row=0)
-janela.mainloop()
+# txt 2
+texto_orientacao2 = Label(janela, text=f"Escolha o mês [MM] ex: 11")
+texto_orientacao2.grid(column=0, row=1)
+# botão
+botão = Button(janela, text="Listar preços", command=logar_no_site)
+print(botão)
+botão.grid(column=0, row=2)
+# txt 3
+texto_menores_precos = Label(janela, text="")
+texto_menores_precos.grid(column=0, row=3)
+# fim da janela
+# janela.mainloop()
 
 mes_num = str(input('Escolha o mês [MM] : '))
 mes_abrev = str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()  # FAZER UMA LISTA COM OS MESES LIDA POR MM (LINHA 282)
 ano = int(input('Escolha o ano[AAAA] : '))
 posicao = int(input('Em qual posição da lista você deseja estar ?')) # PEDIR A POSIÇÃO SÓ QUANDO GERAL OS PREÇOS ?
-logar_no_site()
+# logar_no_site()
 calendariogeral()
 menu()
 input()
+
