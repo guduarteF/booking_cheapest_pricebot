@@ -8,6 +8,9 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
+from tkinter import *
+
+
 # formato calend geral
 # 01 out 2023   -> DD mes AAAA
 
@@ -25,12 +28,16 @@ OCEAN 250
 FORT 280
 """
 
+
 servico = Service(ChromeDriverManager().install())
 navegador = webdriver.Chrome(service=servico)
 dia_de_entrada = 1
 dia_de_saida = 31
 umavez = False
+ano = 2023
+mes_num = 11
 # def selecionar_mes():
+
 
 
 def logar_no_site():
@@ -190,7 +197,6 @@ def criar_link(_checkin, _checkout, qtd_adultos=4, qtd_quartos=1):
           f'&search_pageview_id=3e7a53bb85860208&ac_meta=GhAzZTdhNTNiYjg1ODYwMjA4IAAoATICeGI6CUNhYm8gRnJ' \
           f'pb0AASgBQAA%3D%3D&checkin={_checkin}&checkout={_checkout}&group_adults={qtd_adultos}&' \
           f'no_rooms={qtd_quartos}&group_children=0&sb_travel_purpose=leisure&order=price'
-
     return url
 
 
@@ -212,16 +218,17 @@ def soup(html_content):
     sopa = BeautifulSoup(html_content, 'html.parser')
 
     # Encontrando um elementro específico na pagina
-    precos = sopa.find_all("span", class_="f6431b446c fbd1d3018c e729ed5ab6")
+    precos = sopa.find_all("span", class_="f6431b446c fbfd7c1165 e84eb96b1f")
 
     print('Lista de preços (Ordem Crescente) :')
     for cada in precos:
         global dia_de_entrada
         global dia_de_saida
         divisor = dia_de_saida - dia_de_entrada
-        todos_os_precos.append((float(cada.get_text()[3:9])/divisor))
+        todos_os_precos.append(float(cada.get_text()[3:9])/divisor)
         print(cada.get_text())
     print(todos_os_precos)
+    print(f'os preços são {precos}')
     alterarpreco(todos_os_precos[posicao])
 
 
@@ -300,19 +307,20 @@ def checkout(_ano, _mes_num, _dia_saida):
     return f'{_ano}-{_mes_num}-{_dia_saida}'
 
 
-def bemvindo():
-    print('=' * 60)
-    print('Programa para listar os 25 menores preços Cabo Frio - Rj')
-    print('=' * 60)
+janela = Tk()
+janela.title("Programa para listar os 25 menores preços Cabo Frio - Rj")
+texto_orientacao = Label(janela, text=f'FILTROS ATUAIS: Estado > Rj / Cidade > Cabo Frio / Quartos > {qtd_quartos_inicial} Adultos > {qtd_adultos_inicial} / Crianças > 0 / Ano > {ano} Mês > {mes_num}')
+texto_orientacao.grid(column=0, row=0)
 
+texto_orientacao2 = Label(janela, text="yyy")
+texto_orientacao2.grid(column=1, row=0)
+janela.mainloop()
 
-bemvindo()
 mes_num = str(input('Escolha o mês [MM] : '))
-mes_abrev = str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()
+mes_abrev = str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()  # FAZER UMA LISTA COM OS MESES LIDA POR MM (LINHA 282)
 ano = int(input('Escolha o ano[AAAA] : '))
-posicao = int(input('Em qual posição da lista você deseja estar ?'))
+posicao = int(input('Em qual posição da lista você deseja estar ?')) # PEDIR A POSIÇÃO SÓ QUANDO GERAL OS PREÇOS ?
 logar_no_site()
 calendariogeral()
 menu()
 input()
-# entrada_das_datas()
