@@ -36,8 +36,8 @@ dia_de_saida = 31
 umavez = False
 ano = 2023
 mes_num = 11
+posicao = 5  # int(input('Em qual posição da lista você deseja estar ?'))  # PEDIR A POSIÇÃO SÓ QUANDO GERAL OS PREÇOS ?
 # def selecionar_mes():
-
 
 
 def logar_no_site():
@@ -228,8 +228,9 @@ def soup(html_content):
         todos_os_precos.append(float(cada.get_text()[3:9])/divisor)
         print(cada.get_text())
     print(todos_os_precos)
+    mostrar_precos["text"] = todos_os_precos
     print(f'os preços são {precos}')
-    alterarpreco(todos_os_precos[posicao])
+    # alterarpreco(todos_os_precos[posicao])
 
 
 def fazer_requisicao(_checkin, _checkout):
@@ -306,32 +307,82 @@ def checkout(_ano, _mes_num, _dia_saida):
     dia_de_saida = _dia_saida
     return f'{_ano}-{_mes_num}-{_dia_saida}'
 
+
+def mes_input(inp):
+    global mes_num
+    mes_num = inp
+
+
+def converter_mes_abrev(mes):
+    _mes = str(mes)
+    meses_abrev = {'01': 'jan', '02': 'fev', '03': 'mar', '04': 'abr', '05': 'mai', '06': 'jun', '07': 'jul',
+                   '08': 'ago', '09': 'set', '10': 'out', '11': 'nov', '12': 'dez'}
+    return meses_abrev[_mes]
+
+
+def clicou():
+    global dia_de_entrada, dia_de_saida, ano, mes_num, mes_abrev
+    mes_num = int(input_mes.get())
+    mes_abrev = converter_mes_abrev(mes_num)
+    dia_de_entrada = int(input_checkin.get())
+    dia_de_saida = int(input_checkout.get())
+    ano = int(input_ano.get())
+
+    fazer_requisicao(checkin(ano, mes_num, dia_de_entrada), checkout(ano, mes_num, dia_de_saida))
+
+
+
 # Inicio da janela
 janela = Tk()
-#titulo
+# titulo
 janela.title("Programa para listar os 25 menores preços Cabo Frio - Rj")
-# txt 1
-texto_orientacao = Label(janela, text=f'FILTROS ATUAIS: Estado > Rj / Cidade > Cabo Frio / Quartos > {qtd_quartos_inicial} Adultos > {qtd_adultos_inicial} / Crianças > 0 / Ano > {ano} Mês > {mes_num}')
-texto_orientacao.grid(column=0, row=0)
-# txt 2
-texto_orientacao2 = Label(janela, text=f"Escolha o mês [MM] ex: 11")
-texto_orientacao2.grid(column=0, row=1)
-# botão
-botão = Button(janela, text="Listar preços", command=logar_no_site)
-print(botão)
-botão.grid(column=0, row=2)
-# txt 3
-texto_menores_precos = Label(janela, text="")
-texto_menores_precos.grid(column=0, row=3)
+# tamanho
+janela.geometry("600x400")
+# txt filtros
+texto_filtros = Label(janela, text=f'FILTROS ATUAIS: Estado = Rj / Cidade = Cabo Frio / Quartos = {qtd_quartos_inicial}'
+                                   f' / Adultos = {qtd_adultos_inicial} / Crianças = 0')
+texto_filtros.grid(column=0, row=0)
+# txt input_window_ano
+texto2 = Label(janela, text=f"Para qual ano [AAAA]:")
+texto2.grid(column=0, row=1)
+# input ano
+input_ano = Entry(janela, width=100)
+input_ano.grid(column=0, row=2)
+# txt input_window_mês
+texto_mes = Label(janela, text=f"Escolha o mês que será pesquisado [MM]: ")
+texto_mes.grid(column=0, row=3)
+# input mês
+input_mes = Entry(janela, width=100)
+input_mes.grid(column=0, row=4)
+# txt checkin
+texto_checkin = Label(janela, text="Dia de entrada [DD]:")
+texto_checkin.grid(column=0, row=5)
+# input checkin
+input_checkin = Entry(janela, width=100)
+input_checkin.grid(column=0, row=6)
+# txt checkout
+texto_checkout = Label(janela, text="Dia de saída [DD]")
+texto_checkout.grid(column=0, row=7)
+# input checkout
+input_checkout = Entry(janela, width=100)
+input_checkout.grid(column=0, row=8)
+# botão listar
+botao = Button(janela, text="Listar preços", command=clicou)
+botao.grid(column=0, row=9)
+# txt precos
+mostrar_precos = Label(janela, text=f"")
+mostrar_precos.grid(column=0, row=10)
+
+
 # fim da janela
-# janela.mainloop()
+janela.mainloop()
 
-mes_num = str(input('Escolha o mês [MM] : '))
-mes_abrev = str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()  # FAZER UMA LISTA COM OS MESES LIDA POR MM (LINHA 282)
-ano = int(input('Escolha o ano[AAAA] : '))
-posicao = int(input('Em qual posição da lista você deseja estar ?')) # PEDIR A POSIÇÃO SÓ QUANDO GERAL OS PREÇOS ?
+# mes_num = str(input('Escolha o mês [MM] : '))
+mes_abrev = 'nov'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()  # FAZER UMA LISTA COM OS
+# MESES LIDA POR MM (LINHA 282)
+# ano = int(input('Escolha o ano[AAAA] : '))
+
 # logar_no_site()
-calendariogeral()
-menu()
+# calendariogeral()
+# menu()
 input()
-
