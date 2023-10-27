@@ -48,7 +48,7 @@ def logar_no_site():
     try:
         (navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').
          send_keys("carloseduardoferre@gmail.com"))
-        navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("******")
+        navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("*********@")
         navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
     except Exception as erro:
         print(f'O erro foi {erro.__class__}')
@@ -219,16 +219,20 @@ def soup(html_content):
 
     # Encontrando um elementro específico na pagina
     precos = sopa.find_all("span", class_="f6431b446c fbfd7c1165 e84eb96b1f")
-
+    pos = 0
     print('Lista de preços (Ordem Crescente) :')
     for cada in precos:
+        pos += 1
         global dia_de_entrada
         global dia_de_saida
         divisor = dia_de_saida - dia_de_entrada
         todos_os_precos.append(float(cada.get_text()[3:9])/divisor)
+        txt_interface_line = f"{pos}º        {cada.get_text()} "
+        new_interface_line = Label(janela, text=txt_interface_line)
+        new_interface_line.grid(column=0, row=11 + pos)
         print(cada.get_text())
     print(todos_os_precos)
-    mostrar_precos["text"] = todos_os_precos
+    # mostrar_precos["text"] = todos_os_precos
     print(f'os preços são {precos}')
     # alterarpreco(todos_os_precos[posicao])
 
