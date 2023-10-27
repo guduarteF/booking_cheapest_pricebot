@@ -28,7 +28,6 @@ OCEAN 250
 FORT 280
 """
 
-
 servico = Service(ChromeDriverManager().install())
 navegador = webdriver.Chrome(service=servico)
 dia_de_entrada = 1
@@ -38,6 +37,8 @@ ano = 2023
 mes_num = 11
 posicao = 5  # int(input('Em qual posição da lista você deseja estar ?'))  # PEDIR A POSIÇÃO SÓ QUANDO GERAL OS PREÇOS ?
 # def selecionar_mes():
+login = ""
+senha = ""
 
 
 def logar_no_site():
@@ -45,26 +46,29 @@ def logar_no_site():
     navegador.get("https://tnp.stays.com.br/i/home")
     sleep(1)
     # Prenchimento de login
-    try:
-        (navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').
-         send_keys("carloseduardoferre@gmail.com"))
-        navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys("*********@")
-        navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
-    except Exception as erro:
-        print(f'O erro foi {erro.__class__}')
-    sleep(3)
+    while True:
+        try:
+            (navegador.find_element('xpath', '//*[@id="login-form"]/form/div[1]/input').
+             send_keys(login))
+            navegador.find_element('xpath', '//*[@id="login-form"]/form/div[2]/div/input').send_keys(senha)
+            navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
+            break
+        except Exception as erro:
+            print(f'O erro foi {erro.__class__}')
+        sleep(3)
 
 
 def calendariogeral():
-    # Seleciona o menu de opções
-    navegador.find_element('xpath', '//*[@id="leftmenu"]/div[1]/ul/li/a/i').click()
-    sleep(3)
-    # Calendário Geral
-    try:
-        navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
-    except Exception as erro:
-        print(f'Problema encontrado foi {erro.__class__}')
-
+    while True:
+        try:
+            # Seleciona o menu de opções
+            navegador.find_element('xpath', '//*[@id="leftmenu"]/div[1]/ul/li/a/i').click()
+            sleep(3)
+            # Calendário Geral
+            navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
+            break
+        except Exception as erro:
+            print(f'O erro foi {erro.__class__}')
     sleep(3)
 
 
@@ -125,15 +129,19 @@ def young():
     sleep(3)
     global umavez
     if umavez is False:
-        # Clica no + (expandir) para exibição dos preços
-        navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/'
-                                        'tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
-        sleep(3)
-        # Clica no preço
-        navegador.find_element('xpath',
-                               '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/tbody'
-                               '/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
-        umavez = True
+        try:
+            # Clica no + (expandir) para exibição dos preços
+            navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/'
+                                            'tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath',
+                                   '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/tbody'
+                                   '/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
+            umavez = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro.__class__}")
     else:
         sleep(3)
         # Clica no preço ( HIGHLIGHT )
@@ -227,9 +235,13 @@ def soup(html_content):
         global dia_de_saida
         divisor = dia_de_saida - dia_de_entrada
         todos_os_precos.append(float(cada.get_text()[3:9])/divisor)
-        txt_interface_line = f"{pos}º        {cada.get_text()} "
-        new_interface_line = Label(janela, text=txt_interface_line)
-        new_interface_line.grid(column=0, row=11 + pos)
+        txt_price = f"{pos}º        {cada.get_text()} "
+        new_price_line = Label(janela, text=txt_price)
+        new_price_line.grid(column=1, row=1+pos)
+        txt_diaria = f"R$ {float(cada.get_text()[3:9])/divisor}"
+        new_diaria_value = Label(janela, text=txt_diaria)
+        new_diaria_value.grid(column=2, row=1+pos)
+
         print(cada.get_text())
     print(todos_os_precos)
     # mostrar_precos["text"] = todos_os_precos
@@ -325,7 +337,7 @@ def converter_mes_abrev(mes):
 
 
 def clicou():
-    global dia_de_entrada, dia_de_saida, ano, mes_num, mes_abrev
+    global dia_de_entrada, dia_de_saida, ano, mes_num, mes_abrev, input_pos
     mes_num = int(input_mes.get())
     mes_abrev = converter_mes_abrev(mes_num)
     dia_de_entrada = int(input_checkin.get())
@@ -333,7 +345,41 @@ def clicou():
     ano = int(input_ano.get())
 
     fazer_requisicao(checkin(ano, mes_num, dia_de_entrada), checkout(ano, mes_num, dia_de_saida))
+    # txt pos
+    texto_pos = Label(janela, text="Qual posição você quer incluir o seu preço ?")
+    texto_pos.grid(column=0, row=15)
+    # Grid pos
+    input_pos.grid(column=0, row=16)
+    # espaço vazio
+    espaco_vazio = Label(janela, text="")
+    espaco_vazio.grid(column=0, row=17)
+    # txt stays
+    txt_stays = Label(janela, text="Faça login com sua conta Stays para "
+                                   "alterar o seu preço com base na posição escolhida: ")
+    txt_stays.grid(column=0, row=18)
+    # txt login
+    txt_login = Label(janela, text="Login")
+    txt_login.grid(column=0, row=19)
+    # grid login
+    input_login.grid(column=0, row=20)
+    # txt senha
+    txt_senha = Label(janela, text="Senha: ")
+    txt_senha.grid(column=0, row=21)
+    # grid senha
+    input_senha.grid(column=0, row=22)
+    # botão logar
+    entrar_site = Button(janela, text="Entrar", command=entrar)
+    entrar_site.grid(column=0, row=23)
 
+
+def entrar():
+    global posicao, login, senha
+    posicao = input_pos.get()
+    login = input_login.get()
+    senha = input_senha.get()
+    logar_no_site()
+    calendariogeral()
+    young()
 
 
 # Inicio da janela
@@ -341,7 +387,7 @@ janela = Tk()
 # titulo
 janela.title("Programa para listar os 25 menores preços Cabo Frio - Rj")
 # tamanho
-janela.geometry("600x400")
+janela.geometry("900x800")
 # txt filtros
 texto_filtros = Label(janela, text=f'FILTROS ATUAIS: Estado = Rj / Cidade = Cabo Frio / Quartos = {qtd_quartos_inicial}'
                                    f' / Adultos = {qtd_adultos_inicial} / Crianças = 0')
@@ -350,32 +396,41 @@ texto_filtros.grid(column=0, row=0)
 texto2 = Label(janela, text=f"Para qual ano [AAAA]:")
 texto2.grid(column=0, row=1)
 # input ano
-input_ano = Entry(janela, width=100)
+input_ano = Entry(janela, width=50)
 input_ano.grid(column=0, row=2)
 # txt input_window_mês
 texto_mes = Label(janela, text=f"Escolha o mês que será pesquisado [MM]: ")
 texto_mes.grid(column=0, row=3)
 # input mês
-input_mes = Entry(janela, width=100)
+input_mes = Entry(janela, width=50)
 input_mes.grid(column=0, row=4)
 # txt checkin
 texto_checkin = Label(janela, text="Dia de entrada [DD]:")
 texto_checkin.grid(column=0, row=5)
 # input checkin
-input_checkin = Entry(janela, width=100)
+input_checkin = Entry(janela, width=50)
 input_checkin.grid(column=0, row=6)
 # txt checkout
 texto_checkout = Label(janela, text="Dia de saída [DD]")
 texto_checkout.grid(column=0, row=7)
 # input checkout
-input_checkout = Entry(janela, width=100)
+input_checkout = Entry(janela, width=50)
 input_checkout.grid(column=0, row=8)
 # botão listar
-botao = Button(janela, text="Listar preços", command=clicou)
-botao.grid(column=0, row=9)
+botao_listar = Button(janela, text="Listar preços", command=clicou)
+botao_listar.grid(column=0, row=9)
 # txt precos
-mostrar_precos = Label(janela, text=f"")
-mostrar_precos.grid(column=0, row=10)
+mostrar_precos = Label(janela, text=f"Menores preços [Ordem Crescente]")
+mostrar_precos.grid(column=1, row=1)
+# txt diarias
+txt_diaria_value = Label(janela, text="Valor da diária: ", padx=100, pady=10)
+txt_diaria_value.grid(column=2, row=1)
+# input pos
+input_pos = Entry(janela, width=50)
+# input login
+input_login = Entry(janela, width=50)
+# input senha
+input_senha = Entry(janela, width=50)
 
 
 # fim da janela
