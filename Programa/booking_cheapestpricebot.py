@@ -7,7 +7,6 @@ from time import sleep
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-
 from tkinter import *
 
 
@@ -39,6 +38,7 @@ posicao = 5  # int(input('Em qual posição da lista você deseja estar ?'))  # 
 # def selecionar_mes():
 login = ""
 senha = ""
+allprices = list()
 
 
 def logar_no_site():
@@ -74,33 +74,46 @@ def calendariogeral():
 
 def entrada_das_datas():
     sleep(3)
-    # Data de entrada
-    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[1]/div/input[1]').clear()
-    sleep(3)
-    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[1]/div/input[1]')\
-        .send_keys(f"{dia_de_entrada} {mes_abrev} {ano}")
+    while True:
+        try:
+            # Data de entrada
+            navegador.find_element('xpath',  '/html/body/div[7]/div/div/div[2]/div/div/form'
+                                             '/div[1]/div[1]/div/input').clear()
+            sleep(3)
+            navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[1]/div/input')\
+                .send_keys(f"{dia_de_entrada} {mes_abrev} {ano}")
+            ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+            sleep(3)
+            # Data de saída
+            navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form'
+                                            '/div[1]/div[2]/div/input').clear()
+            sleep(3)
+            navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[2]/div/input')\
+                .send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
+            sleep(1)
 
-    sleep(3)
-    # Data de saída
-    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[2]/div/input[1]').clear()
-    sleep(3)
-    navegador.find_element('xpath', '//*[@id="filterform"]/div[1]/div[2]/div/input[1]')\
-        .send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
-    sleep(1)
-
-    # Atualizar
-    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
-    sleep(1)
-    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+            # Atualizar
+            ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+            sleep(1)
+            ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+            break
+        except Exception as erro:
+            print(f'O erro foi {erro.__class__}')
 
 
 def alterarpreco(_price):
     # Altera o valor do preço base
     sleep(3)
-    navegador.find_element('xpath', '//*[@id="rates-block"]/div[1]/div[2]/div/input')\
-        .send_keys(_price)
-    sleep(3)
-    navegador.find_element(By.CLASS_NAME, 'btn-primary').click()
+    while True:
+        try:
+            navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form/div[3]/div/table/tbody/tr[1]'
+                                            '/td[1]/div/div[1]/div/div[1]/input') \
+                .send_keys(_price)
+            sleep(3)
+            navegador.find_element(By.CLASS_NAME, 'btn-primary').click()
+            break
+        except Exception as erro:
+            print(f'O erro foi {erro.__class__}')
 
 
 def alterardata(_checkin, _checkout):
@@ -131,13 +144,13 @@ def young():
     if umavez is False:
         try:
             # Clica no + (expandir) para exibição dos preços
-            navegador.find_element('xpath', '//*[@id="right-content-block"]/div/div/div/div[2]/div/table/tbody/'
-                                            'tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
+            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/'
+                                            'tbody/tr/td[1]/div/div/table/tbody/tr[16]/td/div/div/span[2]').click()
             sleep(3)
             # Clica no preço
             navegador.find_element('xpath',
-                                   '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/tbody'
-                                   '/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[2]/div/div').click()
+                                   '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/tbody/tr/'
+                                   'td[3]/div/div/div/table/tbody/tr[20]/td/div/div[2]/div[2]/div').click()
             umavez = True
 
         except Exception as erro:
@@ -145,9 +158,9 @@ def young():
     else:
         sleep(3)
         # Clica no preço ( HIGHLIGHT )
-        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
-                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/div[20]'
-                                         '/div').click()
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/'
+                                         'tbody/tr/td[3]/div/div/div/table/tbody'
+                                         '/tr[20]/td/div/div[2]/div[19]/div').click()
         sleep(3)
 
 
@@ -234,11 +247,14 @@ def soup(html_content):
         global dia_de_entrada
         global dia_de_saida
         divisor = dia_de_saida - dia_de_entrada
-        todos_os_precos.append(float(cada.get_text()[3:9])/divisor)
+        valor = cada.get_text().replace('.', ',')[3::]
+        resultado = float(valor) / divisor
+        todos_os_precos.append(resultado)
+        # funcao para retirar só o valor da string 'cada'
         txt_price = f"{pos}º        {cada.get_text()} "
         new_price_line = Label(janela, text=txt_price)
         new_price_line.grid(column=1, row=1+pos)
-        txt_diaria = f"R$ {float(cada.get_text()[3:9])/divisor}"
+        txt_diaria = f"R$ {float(cada.get_text()[3::])/divisor}"
         new_diaria_value = Label(janela, text=txt_diaria)
         new_diaria_value.grid(column=2, row=1+pos)
 
@@ -246,6 +262,8 @@ def soup(html_content):
     print(todos_os_precos)
     # mostrar_precos["text"] = todos_os_precos
     print(f'os preços são {precos}')
+    global allprices
+    allprices = todos_os_precos
     # alterarpreco(todos_os_precos[posicao])
 
 
@@ -336,7 +354,7 @@ def converter_mes_abrev(mes):
     return meses_abrev[_mes]
 
 
-def clicou():
+def listar_precos():
     global dia_de_entrada, dia_de_saida, ano, mes_num, mes_abrev, input_pos
     mes_num = int(input_mes.get())
     mes_abrev = converter_mes_abrev(mes_num)
@@ -380,6 +398,8 @@ def entrar():
     logar_no_site()
     calendariogeral()
     young()
+    entrada_das_datas()
+    alterarpreco(allprices[int(posicao) - 1])
 
 
 # Inicio da janela
@@ -417,7 +437,7 @@ texto_checkout.grid(column=0, row=7)
 input_checkout = Entry(janela, width=50)
 input_checkout.grid(column=0, row=8)
 # botão listar
-botao_listar = Button(janela, text="Listar preços", command=clicou)
+botao_listar = Button(janela, text="Listar preços", command=listar_precos)
 botao_listar.grid(column=0, row=9)
 # txt precos
 mostrar_precos = Label(janela, text=f"Menores preços [Ordem Crescente]")
@@ -430,7 +450,7 @@ input_pos = Entry(janela, width=50)
 # input login
 input_login = Entry(janela, width=50)
 # input senha
-input_senha = Entry(janela, width=50)
+input_senha = Entry(janela, width=50, show='*')
 
 
 # fim da janela
