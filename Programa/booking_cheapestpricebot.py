@@ -404,6 +404,14 @@ def entrar():
     alterarpreco(allprices[int(posicao) - 1])
 
 
+def buttoncheck1():
+    checkbutton2.deselect()
+
+
+def buttoncheck2():
+    checkbutton1.deselect()
+
+
 # Inicio da janela
 janela = Tk()
 # titulo
@@ -414,55 +422,61 @@ janela.geometry("900x800")
 texto_filtros = Label(janela, text=f'FILTROS ATUAIS: Estado = Rj / Cidade = Cabo Frio / Quartos = {qtd_quartos_inicial}'
                                    f' / Adultos = {qtd_adultos_inicial} / Crianças = 0')
 texto_filtros.grid(column=0, row=0)
-# janela
-""" 
-countryvar = StringVar()
-country = ttk.Combobox(parent, textvariable=countryvar)
-"""
-casas = [['Slim', 'Family'], ['Young', 'Economics'], ['Dunas', 'Exclusive']]
-w = ttk.Combobox(janela, height=10, values=casas)
-w.grid(column=0, row=0)
+# txt casa
+txt_casa = Label(janela, text='Escolha a casa: ')
+txt_casa.grid(column=0, row=1)
+# combobox casas
+combobox = ttk.Combobox(janela, height=10)
+combobox['values'] = ('Slim', 'Young', 'Economics', 'Family', 'Dunas', 'Exclusive',
+                      'Bandeira', 'Fort Beach', 'Ocean Blue', 'Confort')
+combobox.state(['readonly'])
+combobox.grid(column=0, row=2)
 # txt input_window_ano
 texto2 = Label(janela, text=f"Para qual ano [AAAA]:")
-texto2.grid(column=0, row=1)
+texto2.grid(column=0, row=3)
 # input ano
 input_ano = Entry(janela, width=50)
-input_ano.grid(column=0, row=2)
+input_ano.grid(column=0, row=4)
 # txt input_window_mês
 texto_mes = Label(janela, text=f"Escolha o mês que será pesquisado [MM]: ")
-texto_mes.grid(column=0, row=3)
+texto_mes.grid(column=0, row=5)
 # input mês
 input_mes = Entry(janela, width=50)
-input_mes.grid(column=0, row=4)
+input_mes.grid(column=0, row=6)
 # Text Checkbutton
 txt_checkb = Label(janela, text=f"Pesquisar por: ")
-txt_checkb.grid(column=0, row=5)
+txt_checkb.grid(column=0, row=7)
 # checkbutton
-checkbutton1 = tkinter.Checkbutton(janela, text='Mês inteiro')
-checkbutton1.grid(column=0, row=6)
-checkbutton2 = tkinter.Checkbutton(janela, text='Data específica')
-checkbutton2.grid(column=0, row=7)
+checkbutton1 = tkinter.Checkbutton(janela, text='Mês inteiro', command=buttoncheck1)
+checkbutton1.grid(column=0, row=8)
+checkbutton2 = tkinter.Checkbutton(janela, text='Data específica', command=buttoncheck2)
+checkbutton2.grid(column=0, row=9)
 # txt checkin
 texto_checkin = Label(janela, text="Dia de entrada [DD]:")
-texto_checkin.grid(column=0, row=8)
+texto_checkin.grid(column=0, row=10)
 # input checkin
 input_checkin = Entry(janela, width=50)
-input_checkin.grid(column=0, row=9)
+input_checkin.grid(column=0, row=11)
 # txt checkout
 texto_checkout = Label(janela, text="Dia de saída [DD]")
-texto_checkout.grid(column=0, row=10)
+texto_checkout.grid(column=0, row=12)
 # input checkout
 input_checkout = Entry(janela, width=50)
-input_checkout.grid(column=0, row=11)
+input_checkout.grid(column=0, row=13)
 # botão listar
 botao_listar = Button(janela, text="Listar preços", command=listar_precos)
-botao_listar.grid(column=0, row=12)
+botao_listar.grid(column=0, row=14)
+
+# Coluna 1
 # txt precos
 mostrar_precos = Label(janela, text=f"Menores preços [Ordem Crescente]")
 mostrar_precos.grid(column=1, row=1)
+# Coluna 2
 # txt diarias
 txt_diaria_value = Label(janela, text="Valor da diária: ", padx=100, pady=10)
 txt_diaria_value.grid(column=2, row=1)
+
+# Instâncias separadas do grid
 # input pos
 input_pos = Entry(janela, width=50)
 # input login
