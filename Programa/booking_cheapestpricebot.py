@@ -1,3 +1,6 @@
+import tkinter
+from tkinter import ttk
+
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -247,14 +250,13 @@ def soup(html_content):
         global dia_de_entrada
         global dia_de_saida
         divisor = dia_de_saida - dia_de_entrada
-        valor = cada.get_text().replace('.', ',')[3::]
-        resultado = float(valor) / divisor
+        valor = int(cada.get_text().replace('.', '')[3::])
+        resultado = valor / divisor
         todos_os_precos.append(resultado)
-        # funcao para retirar só o valor da string 'cada'
         txt_price = f"{pos}º        {cada.get_text()} "
         new_price_line = Label(janela, text=txt_price)
         new_price_line.grid(column=1, row=1+pos)
-        txt_diaria = f"R$ {float(cada.get_text()[3::])/divisor}"
+        txt_diaria = f"R$ {round(resultado)}"
         new_diaria_value = Label(janela, text=txt_diaria)
         new_diaria_value.grid(column=2, row=1+pos)
 
@@ -412,6 +414,14 @@ janela.geometry("900x800")
 texto_filtros = Label(janela, text=f'FILTROS ATUAIS: Estado = Rj / Cidade = Cabo Frio / Quartos = {qtd_quartos_inicial}'
                                    f' / Adultos = {qtd_adultos_inicial} / Crianças = 0')
 texto_filtros.grid(column=0, row=0)
+# janela
+""" 
+countryvar = StringVar()
+country = ttk.Combobox(parent, textvariable=countryvar)
+"""
+casas = [['Slim', 'Family'], ['Young', 'Economics'], ['Dunas', 'Exclusive']]
+w = ttk.Combobox(janela, height=10, values=casas)
+w.grid(column=0, row=0)
 # txt input_window_ano
 texto2 = Label(janela, text=f"Para qual ano [AAAA]:")
 texto2.grid(column=0, row=1)
@@ -424,21 +434,29 @@ texto_mes.grid(column=0, row=3)
 # input mês
 input_mes = Entry(janela, width=50)
 input_mes.grid(column=0, row=4)
+# Text Checkbutton
+txt_checkb = Label(janela, text=f"Pesquisar por: ")
+txt_checkb.grid(column=0, row=5)
+# checkbutton
+checkbutton1 = tkinter.Checkbutton(janela, text='Mês inteiro')
+checkbutton1.grid(column=0, row=6)
+checkbutton2 = tkinter.Checkbutton(janela, text='Data específica')
+checkbutton2.grid(column=0, row=7)
 # txt checkin
 texto_checkin = Label(janela, text="Dia de entrada [DD]:")
-texto_checkin.grid(column=0, row=5)
+texto_checkin.grid(column=0, row=8)
 # input checkin
 input_checkin = Entry(janela, width=50)
-input_checkin.grid(column=0, row=6)
+input_checkin.grid(column=0, row=9)
 # txt checkout
 texto_checkout = Label(janela, text="Dia de saída [DD]")
-texto_checkout.grid(column=0, row=7)
+texto_checkout.grid(column=0, row=10)
 # input checkout
 input_checkout = Entry(janela, width=50)
-input_checkout.grid(column=0, row=8)
+input_checkout.grid(column=0, row=11)
 # botão listar
 botao_listar = Button(janela, text="Listar preços", command=listar_precos)
-botao_listar.grid(column=0, row=9)
+botao_listar.grid(column=0, row=12)
 # txt precos
 mostrar_precos = Label(janela, text=f"Menores preços [Ordem Crescente]")
 mostrar_precos.grid(column=1, row=1)
