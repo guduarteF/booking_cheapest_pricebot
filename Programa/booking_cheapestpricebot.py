@@ -1,9 +1,13 @@
+# Tk Inter lida com a parte de interface do programa
 import tkinter
 from tkinter import ttk
-
+# Request faz todas as requisições booking.com e stay.net
 import requests
+# Beautiful Soup recolhe as informações (raspagewm de dados) do site e organiza de forma legível
 from bs4 import BeautifulSoup
+# Selenium faz a automatização de ações no navegador
 from selenium import webdriver
+# WebDriver faz a sincronização de versão do navegador em questão (Chrome)
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from time import sleep
@@ -33,7 +37,7 @@ FORT 280
 servico = Service(ChromeDriverManager().install())
 navegador = webdriver.Chrome(service=servico)
 dia_de_entrada = 1
-dia_de_saida = 31
+dia_de_saida = 3
 umavez = False
 ano = 2023
 mes_num = 11
@@ -42,6 +46,7 @@ posicao = 5  # int(input('Em qual posição da lista você deseja estar ?'))  # 
 login = ""
 senha = ""
 allprices = list()
+mes_inteiro = True
 
 
 def logar_no_site():
@@ -259,6 +264,7 @@ def soup(html_content):
         txt_diaria = f"R$ {round(resultado)}"
         new_diaria_value = Label(janela, text=txt_diaria)
         new_diaria_value.grid(column=2, row=1+pos)
+        janela.update()
 
         print(cada.get_text())
     print(todos_os_precos)
@@ -315,21 +321,30 @@ def escolher_datas():
 
 
 def listar_precos_mes():
-    dia_entrada = 1
-    dia_saida = 3
+    global dia_de_entrada, dia_de_saida
+    dia_de_entrada = 1
+    dia_de_saida = 3
+
     # 01 = janeiro ...
     qtd_dias_mes = {'01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30, '07': 31,
                     '08': 31, '09': 30, '10': 31, '11': 30, '12': 31}
 
-    while dia_saida < qtd_dias_mes[mes_num]:
+    while dia_de_saida < qtd_dias_mes[f'{mes_num}']:
+        # Checkin txt
+        txt_checkin = Label(janela, text=f'Check-in : {dia_de_entrada}')
+        txt_checkin.grid(column=0, row=11)
+        # Checkout txt
+        txt_checkout = Label(janela, text=f'Check-out: {dia_de_saida}')
+        txt_checkout.grid(column=0, row=12)
+
         print('-' * 60)
-        print(f'Checkin: {checkin(ano,mes_num,dia_entrada)}')
-        print(f'Checkout: {checkout(ano,mes_num,dia_saida)}')
+        print(f'Checkin: {checkin(ano,mes_num,dia_de_entrada)}')
+        print(f'Checkout: {checkout(ano,mes_num,dia_de_saida)}')
         young()
-        alterardata(dia_entrada, dia_saida)
-        fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
-        dia_saida += 2
-        dia_entrada += 2
+        # alterardata(dia_entrada, dia_saida)
+        fazer_requisicao(checkin(ano, mes_num, dia_de_entrada), checkout(ano, mes_num, dia_de_saida))
+        dia_de_saida += 2
+        dia_de_entrada += 2
 
 
 def checkin(_ano, _mes_num, _dia_entrada):
@@ -359,39 +374,27 @@ def converter_mes_abrev(mes):
 def listar_precos():
     global dia_de_entrada, dia_de_saida, ano, mes_num, mes_abrev, input_pos
     mes_num = int(input_mes.get())
-    mes_abrev = converter_mes_abrev(mes_num)
-    dia_de_entrada = int(input_checkin.get())
-    dia_de_saida = int(input_checkout.get())
+    mes_abrev = converter_mes_abrev(f'{mes_num}')
     ano = int(input_ano.get())
 
-    fazer_requisicao(checkin(ano, mes_num, dia_de_entrada), checkout(ano, mes_num, dia_de_saida))
+    if mes_inteiro:
+        listar_precos_mes()
+    else:
+        dia_de_entrada = int(input_checkin.get())
+        dia_de_saida = int(input_checkout.get())
+        fazer_requisicao(checkin(ano, mes_num, dia_de_entrada), checkout(ano, mes_num, dia_de_saida))
+
     # txt pos
     texto_pos = Label(janela, text="Qual posição você quer incluir o seu preço ?")
-    texto_pos.grid(column=0, row=15)
+    texto_pos.grid(column=0, row=17)
     # Grid pos
-    input_pos.grid(column=0, row=16)
+    input_pos.grid(column=0, row=18)
     # espaço vazio
     espaco_vazio = Label(janela, text="")
-    espaco_vazio.grid(column=0, row=17)
-    # txt stays
-    txt_stays = Label(janela, text="Faça login com sua conta Stays para "
-                                   "alterar o seu preço com base na posição escolhida: ")
-    txt_stays.grid(column=0, row=18)
-    # txt login
-    txt_login = Label(janela, text="Login")
-    txt_login.grid(column=0, row=19)
-    # grid login
-    input_login.grid(column=0, row=20)
-    # txt senha
-    txt_senha = Label(janela, text="Senha: ")
-    txt_senha.grid(column=0, row=21)
-    # grid senha
-    input_senha.grid(column=0, row=22)
-    # botão logar
-    entrar_site = Button(janela, text="Entrar", command=entrar)
-    entrar_site.grid(column=0, row=23)
+    espaco_vazio.grid(column=0, row=19)
 
-
+    entrada_das_datas()
+    alterarpreco(allprices[int(posicao) - 1])
 def entrar():
     global posicao, login, senha
     posicao = input_pos.get()
@@ -400,28 +403,60 @@ def entrar():
     logar_no_site()
     calendariogeral()
     young()
-    entrada_das_datas()
-    alterarpreco(allprices[int(posicao) - 1])
+
+    # Grid
+
+    texto2.grid(column=0, row=9)
+    input_ano.grid(column=0, row=10)
+    texto_mes.grid(column=0, row=11)
+    input_mes.grid(column=0, row=12)
+    txt_checkb.grid(column=0, row=13)
+    checkbutton1.grid(column=0, row=14)
+    checkbutton2.grid(column=0, row=15)
+    botao_listar.grid(column=0, row=16)
+
 
 
 def buttoncheck1():
+    # buttao do mes inteiro
     checkbutton2.deselect()
+    # checkin
+    texto_checkin.destroy()
+    input_checkin.destroy()
+    # checkout
+    texto_checkout.destroy()
+    input_checkout.destroy()
+    global mes_inteiro
+    mes_inteiro = True
 
 
 def buttoncheck2():
     checkbutton1.deselect()
+    # checkin
+    texto_checkin.grid(column=0, row=17)
+    input_checkin.grid(column=0, row=18)
+    # checkout
+    texto_checkout.grid(column=0, row=19)
+    input_checkout.grid(column=0, row=20)
+    botao_listar.grid(column=0, row=21)
+    global mes_inteiro
+    mes_inteiro = False
 
 
 # Inicio da janela
 janela = Tk()
-# titulo
-janela.title("Programa para listar os 25 menores preços Cabo Frio - Rj")
 # tamanho
 janela.geometry("900x800")
+
+# titulo
+janela.title("Programa para listar os 25 menores preços Cabo Frio - Rj")
+
+
 # txt filtros
 texto_filtros = Label(janela, text=f'FILTROS ATUAIS: Estado = Rj / Cidade = Cabo Frio / Quartos = {qtd_quartos_inicial}'
                                    f' / Adultos = {qtd_adultos_inicial} / Crianças = 0')
 texto_filtros.grid(column=0, row=0)
+
 # txt casa
 txt_casa = Label(janela, text='Escolha a casa: ')
 txt_casa.grid(column=0, row=1)
@@ -431,59 +466,78 @@ combobox['values'] = ('Slim', 'Young', 'Economics', 'Family', 'Dunas', 'Exclusiv
                       'Bandeira', 'Fort Beach', 'Ocean Blue', 'Confort')
 combobox.state(['readonly'])
 combobox.grid(column=0, row=2)
-# txt input_window_ano
-texto2 = Label(janela, text=f"Para qual ano [AAAA]:")
-texto2.grid(column=0, row=3)
-# input ano
-input_ano = Entry(janela, width=50)
-input_ano.grid(column=0, row=4)
-# txt input_window_mês
-texto_mes = Label(janela, text=f"Escolha o mês que será pesquisado [MM]: ")
-texto_mes.grid(column=0, row=5)
-# input mês
-input_mes = Entry(janela, width=50)
-input_mes.grid(column=0, row=6)
-# Text Checkbutton
-txt_checkb = Label(janela, text=f"Pesquisar por: ")
-txt_checkb.grid(column=0, row=7)
-# checkbutton
-checkbutton1 = tkinter.Checkbutton(janela, text='Mês inteiro', command=buttoncheck1)
-checkbutton1.grid(column=0, row=8)
-checkbutton2 = tkinter.Checkbutton(janela, text='Data específica', command=buttoncheck2)
-checkbutton2.grid(column=0, row=9)
-# txt checkin
-texto_checkin = Label(janela, text="Dia de entrada [DD]:")
-texto_checkin.grid(column=0, row=10)
-# input checkin
-input_checkin = Entry(janela, width=50)
-input_checkin.grid(column=0, row=11)
-# txt checkout
-texto_checkout = Label(janela, text="Dia de saída [DD]")
-texto_checkout.grid(column=0, row=12)
-# input checkout
-input_checkout = Entry(janela, width=50)
-input_checkout.grid(column=0, row=13)
-# botão listar
-botao_listar = Button(janela, text="Listar preços", command=listar_precos)
-botao_listar.grid(column=0, row=14)
 
-# Coluna 1
-# txt precos
-mostrar_precos = Label(janela, text=f"Menores preços [Ordem Crescente]")
-mostrar_precos.grid(column=1, row=1)
-# Coluna 2
-# txt diarias
-txt_diaria_value = Label(janela, text="Valor da diária: ", padx=100, pady=10)
-txt_diaria_value.grid(column=2, row=1)
-
-# Instâncias separadas do grid
 # input pos
 input_pos = Entry(janela, width=50)
+
+# txt stays
+txt_stays = Label(janela, text="Faça login com sua conta Stays para "
+                               "alterar o seu preço com base na posição escolhida: ")
+txt_stays.grid(column=0, row=3)
+# txt login
+txt_login = Label(janela, text="Login")
+txt_login.grid(column=0, row=4)
 # input login
 input_login = Entry(janela, width=50)
+input_login.grid(column=0, row=5)
+# txt senha
+txt_senha = Label(janela, text="Senha: ")
+txt_senha.grid(column=0, row=6)
 # input senha
 input_senha = Entry(janela, width=50, show='*')
+input_senha.grid(column=0, row=7)
+# botão logar
+entrar_site = Button(janela, text="Entrar", command=entrar)
+entrar_site.grid(column=0, row=8)
 
+
+# txt input_window_ano
+texto2 = Label(janela, text=f"Para qual ano [AAAA]:")
+
+# input ano
+input_ano = Entry(janela, width=50)
+
+# txt input_window_mês
+texto_mes = Label(janela, text=f"Escolha o mês que será pesquisado [MM]: ")
+
+# input mês
+input_mes = Entry(janela, width=50)
+
+# Text Checkbutton
+txt_checkb = Label(janela, text=f"Pesquisar por: ")
+
+# checkbutton
+checkbutton1 = tkinter.Checkbutton(janela, text='Mês inteiro', command=buttoncheck1)
+
+checkbutton1.select()
+checkbutton2 = tkinter.Checkbutton(janela, text='Data específica', command=buttoncheck2)
+
+# txt checkin
+texto_checkin = Label(janela, text="Dia de entrada [DD]:")
+# input checkin
+input_checkin = Entry(janela, width=50)
+
+# txt checkout
+texto_checkout = Label(janela, text="Dia de saída [DD]")
+
+# input checkout
+input_checkout = Entry(janela, width=50)
+
+# botão listar
+botao_listar = Button(janela, text="Listar preços", command=listar_precos)
+
+
+# Coluna 1
+coluna_vazia = Label(janela, text='     ')
+coluna_vazia.grid(column=1, row=2)
+# Coluna 2
+# txt precos
+mostrar_precos = Label(janela, text=f"Menores preços [Ordem Crescente]")
+mostrar_precos.grid(column=2, row=2)
+# Coluna 3
+# txt diarias
+txt_diaria_value = Label(janela, text="Valor da diária: ", padx=100, pady=10)
+txt_diaria_value.grid(column=3, row=2)
 
 # fim da janela
 janela.mainloop()
