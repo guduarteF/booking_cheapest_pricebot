@@ -38,6 +38,7 @@ servico = Service(ChromeDriverManager().install())
 navegador = webdriver.Chrome(service=servico)
 dia_de_entrada = 1
 dia_de_saida = 3
+interruptor = False
 umavez = False
 ano = 2023
 mes_num = 11
@@ -90,8 +91,10 @@ def entrada_das_datas():
             sleep(3)
             navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[1]/div/input')\
                 .send_keys(f"{dia_de_entrada} {mes_abrev} {ano}")
+            # Atualizar
             ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
             sleep(3)
+
             # Data de saída
             navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form'
                                             '/div[1]/div[2]/div/input').clear()
@@ -99,11 +102,9 @@ def entrada_das_datas():
             navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[2]/div/input')\
                 .send_keys(f"{dia_de_saida} {mes_abrev} {ano}")
             sleep(1)
-
             # Atualizar
             ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
             sleep(1)
-            ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
             break
         except Exception as erro:
             print(f'O erro foi {erro.__class__}')
@@ -117,13 +118,13 @@ def alterarpreco(_price):
             navegador.find_element('xpath', '/html/body/div[7]/div/div/div[2]/div/div/form/div[3]/div/table/tbody/tr[1]'
                                             '/td[1]/div/div[1]/div/div[1]/input') \
                 .send_keys(_price)
-            sleep(3)
             navegador.find_element(By.CLASS_NAME, 'btn-primary').click()
             break
         except Exception as erro:
             print(f'O erro foi {erro.__class__}')
 
 
+""" 
 def alterardata(_checkin, _checkout):
     sleep(3)
     # In
@@ -145,33 +146,40 @@ def alterardata(_checkin, _checkout):
                                      'input').send_keys(f"{_checkout} {mes_abrev} {ano}")
     ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
 
+"""
+
 
 def young():
     sleep(3)
     global umavez
     if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/'
+                                        'tbody/tr/td[1]/div/div/table/tbody/tr[16]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
         try:
-            # Clica no + (expandir) para exibição dos preços
-            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/'
-                                            'tbody/tr/td[1]/div/div/table/tbody/tr[16]/td/div/div/span[2]').click()
             sleep(3)
             # Clica no preço
             navegador.find_element('xpath',
                                    '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/tbody/tr/'
                                    'td[3]/div/div/div/table/tbody/tr[20]/td/div/div[2]/div[2]/div').click()
-            umavez = True
+            interruptor = True
 
         except Exception as erro:
             print(f"O erro foi {erro.__class__}")
     else:
         sleep(3)
         # Clica no preço ( HIGHLIGHT )
-        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table/'
-                                         'tbody/tr/td[3]/div/div/div/table/tbody'
-                                         '/tr[20]/td/div/div[2]/div[19]/div').click()
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/table'
+                                         '/tbody/tr/td[3]/div/div/div/table/tbody/tr[20]/td/div'
+                                         '/div[2]/div[3]/div/div').click()
+        interruptor = False
         sleep(3)
 
 
+"""
 def escolher_casa():
     print('Deseja alterar o preço de qual casa ?')
     print('1 - YOUNG')
@@ -185,7 +193,7 @@ def escolher_casa():
     print('9 - OCEAN')
     entrada_das_datas()
 
-    """ opcao = int(input('Digite sua opção: '))
+    opcao = int(input('Digite sua opção: '))
     if opcao == 1:
         young() 
     elif opcao == 2:
@@ -249,11 +257,11 @@ def soup(html_content):
     # Encontrando um elementro específico na pagina
     precos = sopa.find_all("span", class_="f6431b446c fbfd7c1165 e84eb96b1f")
     pos = 0
+    global dia_de_entrada
+    global dia_de_saida
     print('Lista de preços (Ordem Crescente) :')
     for cada in precos:
         pos += 1
-        global dia_de_entrada
-        global dia_de_saida
         divisor = dia_de_saida - dia_de_entrada
         valor = int(cada.get_text().replace('.', '')[3::])
         resultado = valor / divisor
@@ -265,14 +273,17 @@ def soup(html_content):
         new_diaria_value = Label(janela, text=txt_diaria)
         new_diaria_value.grid(column=2, row=1+pos)
         janela.update()
-
         print(cada.get_text())
     print(todos_os_precos)
     # mostrar_precos["text"] = todos_os_precos
     print(f'os preços são {precos}')
     global allprices
     allprices = todos_os_precos
-    # alterarpreco(todos_os_precos[posicao])
+    # alterardata(dia_de_entrada, dia_de_saida)
+    # funcao das casas - temporario YOUNG
+    young()
+    entrada_das_datas()
+    alterarpreco(allprices[int(posicao) - 1])
 
 
 def fazer_requisicao(_checkin, _checkout):
@@ -283,6 +294,8 @@ def fazer_requisicao(_checkin, _checkout):
     html_content = response.content
     soup(html_content)
 
+
+""" 
 
 def menu():
     while True:
@@ -316,14 +329,17 @@ def escolher_datas():
     dia_entrada = int(input('Qual o dia de entrada [DD] ? '))
     dia_saida = int(input('Qual o dia de saída [DD] ? '))
     young()
-    alterardata(dia_entrada, dia_saida)
+    # alterardata(dia_entrada, dia_saida)
+    entrada_das_datas()
     fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
+"""
 
 
 def listar_precos_mes():
-    global dia_de_entrada, dia_de_saida
+    global dia_de_entrada, dia_de_saida, posicao
     dia_de_entrada = 1
     dia_de_saida = 3
+    posicao = input_pos.get()
 
     # 01 = janeiro ...
     qtd_dias_mes = {'01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30, '07': 31,
@@ -332,16 +348,14 @@ def listar_precos_mes():
     while dia_de_saida < qtd_dias_mes[f'{mes_num}']:
         # Checkin txt
         txt_checkin = Label(janela, text=f'Check-in : {dia_de_entrada}')
-        txt_checkin.grid(column=0, row=11)
+        txt_checkin.grid(column=0, row=25)
         # Checkout txt
         txt_checkout = Label(janela, text=f'Check-out: {dia_de_saida}')
-        txt_checkout.grid(column=0, row=12)
+        txt_checkout.grid(column=0, row=26)
 
         print('-' * 60)
         print(f'Checkin: {checkin(ano,mes_num,dia_de_entrada)}')
         print(f'Checkout: {checkout(ano,mes_num,dia_de_saida)}')
-        young()
-        # alterardata(dia_entrada, dia_saida)
         fazer_requisicao(checkin(ano, mes_num, dia_de_entrada), checkout(ano, mes_num, dia_de_saida))
         dia_de_saida += 2
         dia_de_entrada += 2
@@ -384,26 +398,13 @@ def listar_precos():
         dia_de_saida = int(input_checkout.get())
         fazer_requisicao(checkin(ano, mes_num, dia_de_entrada), checkout(ano, mes_num, dia_de_saida))
 
-    # txt pos
-    texto_pos = Label(janela, text="Qual posição você quer incluir o seu preço ?")
-    texto_pos.grid(column=0, row=17)
-    # Grid pos
-    input_pos.grid(column=0, row=18)
-    # espaço vazio
-    espaco_vazio = Label(janela, text="")
-    espaco_vazio.grid(column=0, row=19)
 
-    entrada_das_datas()
-    alterarpreco(allprices[int(posicao) - 1])
 def entrar():
-    global posicao, login, senha
-    posicao = input_pos.get()
+    global login, senha
     login = input_login.get()
     senha = input_senha.get()
     logar_no_site()
     calendariogeral()
-    young()
-
     # Grid
 
     texto2.grid(column=0, row=9)
@@ -413,8 +414,15 @@ def entrar():
     txt_checkb.grid(column=0, row=13)
     checkbutton1.grid(column=0, row=14)
     checkbutton2.grid(column=0, row=15)
-    botao_listar.grid(column=0, row=16)
-
+    # txt pos
+    texto_pos = Label(janela, text="Qual posição você quer incluir o seu preço ?")
+    texto_pos.grid(column=0, row=16)
+    # Grid pos
+    input_pos.grid(column=0, row=17)
+    # espaço vazio
+    espaco_vazio = Label(janela, text="")
+    espaco_vazio.grid(column=0, row=18)
+    botao_listar.grid(column=0, row=19)
 
 
 def buttoncheck1():
@@ -433,12 +441,12 @@ def buttoncheck1():
 def buttoncheck2():
     checkbutton1.deselect()
     # checkin
-    texto_checkin.grid(column=0, row=17)
-    input_checkin.grid(column=0, row=18)
+    texto_checkin.grid(column=0, row=20)
+    input_checkin.grid(column=0, row=21)
     # checkout
-    texto_checkout.grid(column=0, row=19)
-    input_checkout.grid(column=0, row=20)
-    botao_listar.grid(column=0, row=21)
+    texto_checkout.grid(column=0, row=22)
+    input_checkout.grid(column=0, row=23)
+    botao_listar.grid(column=0, row=24)
     global mes_inteiro
     mes_inteiro = False
 
@@ -526,18 +534,17 @@ input_checkout = Entry(janela, width=50)
 # botão listar
 botao_listar = Button(janela, text="Listar preços", command=listar_precos)
 
-
 # Coluna 1
 coluna_vazia = Label(janela, text='     ')
 coluna_vazia.grid(column=1, row=2)
 # Coluna 2
 # txt precos
 mostrar_precos = Label(janela, text=f"Menores preços [Ordem Crescente]")
-mostrar_precos.grid(column=2, row=2)
+mostrar_precos.grid(column=1, row=1)
 # Coluna 3
 # txt diarias
 txt_diaria_value = Label(janela, text="Valor da diária: ", padx=100, pady=10)
-txt_diaria_value.grid(column=3, row=2)
+txt_diaria_value.grid(column=2, row=1)
 
 # fim da janela
 janela.mainloop()
