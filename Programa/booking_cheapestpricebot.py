@@ -48,6 +48,7 @@ login = ""
 senha = ""
 allprices = list()
 mes_inteiro = True
+casa_escolhida = ''
 
 
 def logar_no_site():
@@ -63,7 +64,7 @@ def logar_no_site():
             navegador.find_element('xpath', '//*[@id="login-form"]/form/div[3]/div/button').click()
             break
         except Exception as erro:
-            print(f'O erro foi {erro.__class__}')
+            print(f'O erro foi {erro._class_}')
         sleep(3)
 
 
@@ -77,7 +78,7 @@ def calendariogeral():
             navegador.find_element('xpath', '//*[@id="leftmenu-scroll"]/div[2]/ul/div[3]/li[4]/a/span').click()
             break
         except Exception as erro:
-            print(f'O erro foi {erro.__class__}')
+            print(f'O erro foi {erro._class_}')
     sleep(3)
 
 
@@ -107,7 +108,7 @@ def entrada_das_datas():
             sleep(1)
             break
         except Exception as erro:
-            print(f'O erro foi {erro.__class__}')
+            print(f'O erro foi {erro._class_}')
 
 
 def alterarpreco(_price):
@@ -121,32 +122,279 @@ def alterarpreco(_price):
             navegador.find_element(By.CLASS_NAME, 'btn-primary').click()
             break
         except Exception as erro:
-            print(f'O erro foi {erro.__class__}')
+            print(f'O erro foi {erro._class_}')
 
 
-""" 
-def alterardata(_checkin, _checkout):
+def primebeach():
     sleep(3)
-    # In
-    # Clear
-    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[1]/div/input').clear()
-    sleep(3)
-    # Preenche a data de entrada
-    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[1]/div/'
-                                     'input').send_keys(f"{_checkin} {mes_abrev} {ano}")
-    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
-    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/'
+                                        'div[2]/div/table/tbody/tr/td[1]/div/div/table/tbody/tr[6]/td/div/'
+                                        'div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath','/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/'
+                                           'div[2]/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[10]/td/'
+                                           'div/div[2]/div[2]/div/div').click()
+            interruptor = True
 
-    # Out
-    # Clear
-    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[2]/div/input').clear()
-    sleep(3)
-    # Preenche a data de saída
-    navegador.find_element(By.XPATH, '/html/body/div[7]/div/div/div[2]/div/div/form/div[1]/div[2]/div/'
-                                     'input').send_keys(f"{_checkout} {mes_abrev} {ano}")
-    ActionChains(navegador).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/'
+                                         'div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[10]/td/div/div[2]'
+                                         '/div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
 
-"""
+
+def confort():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                            '/div/table/tbody/tr/td[1]/div/div/table/tbody/'
+                                            'tr[7]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/'
+                                                'div[2]/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[11]/td/div'
+                                                '/div[2]/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[11]/'
+                                         'td/div/div[2]/div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
+
+
+def dunas():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                        'table/tbody/tr/td[1]/div/div/table/tbody/tr[8]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                            '/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[12]'
+                                            '/td/div/div[2]/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                           '/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[12]/td/div/div[2]/'
+                                           'div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
+
+
+def economics():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                        'table/tbody/tr/td[1]/div/div/table/tbody/tr[9]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath','/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                           '/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[13]'
+                                           '/td/div/div[2]/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[13]/td/div/div[2]/div[3]/'
+                                         'div/div').click()
+        interruptor = False
+        sleep(3)
+
+
+def exclusive():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                        'table/tbody/tr/td[1]/div/div/table/tbody/tr[10]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath','/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                           '/div/table/tbody/tr/td[3]/div/div/div/table/tbody/'
+                                           'tr[14]/td/div/div[2]/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[14]'
+                                         '/td/div/div[2]/div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
+
+
+def family():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                        'table/tbody/tr/td[1]/div/div/table/tbody/tr[11]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                           '/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[15]/'
+                                           'td/div/div[2]/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[15]'
+                                         '/td/div/div[2]/div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
+
+
+def fortbeach():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                        'table/tbody/tr/td[1]/div/div/table/tbody/tr[12]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                            '/div/table/tbody/tr/td[3]/div/div/div/'
+                                            'table/tbody/tr[16]/td/div/div[2]/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[16]'
+                                         '/td/div/div[2]/div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
+
+
+def oceanblue():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                        'table/tbody/tr/td[1]/div/div/table/tbody/tr[13]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                            '/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[17]/td/div/div[2]'
+                                            '/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[17]'
+                                         '/td/div/div[2]/div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
+
+
+def slim():
+    sleep(3)
+    global umavez
+    if umavez is False:
+        # Clica no + (expandir) para exibição dos preços
+        navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                        'table/tbody/tr/td[1]/div/div/table/tbody/tr[15]/td/div/div/span[2]').click()
+        umavez = True
+    global interruptor
+    if interruptor is False:
+        try:
+            sleep(3)
+            # Clica no preço
+            navegador.find_element('xpath', '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]'
+                                            '/div/table/tbody/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/'
+                                            'div[2]/div[2]/div/div').click()
+            interruptor = True
+
+        except Exception as erro:
+            print(f"O erro foi {erro._class_}")
+    else:
+        sleep(3)
+        # Clica no preço ( HIGHLIGHT )
+        navegador.find_element(By.XPATH, '/html/body/div[1]/main/div[2]/div/div/div[2]/div/div/div/div[2]/div/'
+                                         'table/tbody/tr/td[3]/div/div/div/table/tbody/tr[19]/td/div/div[2]/'
+                                         'div[3]/div/div').click()
+        interruptor = False
+        sleep(3)
 
 
 def young():
@@ -168,7 +416,7 @@ def young():
             interruptor = True
 
         except Exception as erro:
-            print(f"O erro foi {erro.__class__}")
+            print(f"O erro foi {erro._class_}")
     else:
         sleep(3)
         # Clica no preço ( HIGHLIGHT )
@@ -177,42 +425,6 @@ def young():
                                          '/div[2]/div[3]/div/div').click()
         interruptor = False
         sleep(3)
-
-
-"""
-def escolher_casa():
-    print('Deseja alterar o preço de qual casa ?')
-    print('1 - YOUNG')
-    print('2 - CONFORT')
-    print('3 - ECONOMICS')
-    print('4 - FAMILY')
-    print('5 - EXCLUSIVE')
-    print('6 - SLIM')
-    print('7 - DUNAS')
-    print('8 - FORT')
-    print('9 - OCEAN')
-    entrada_das_datas()
-
-    opcao = int(input('Digite sua opção: '))
-    if opcao == 1:
-        young() 
-    elif opcao == 2:
-    # confort()
-    elif opcao == 3:
-     # economics()
-    elif opcao == 4:
-     # family()
-    elif opcao == 5:
-     # exclusive()
-    elif opcao == 6:
-     # slim()
-    elif opcao == 7:
-     # dunas()
-    elif opcao == 8:
-     # fort()
-    elif opcao == 9:
-     # ocean()
-     """
 
 
 # criando cabeçalho da request
@@ -249,6 +461,29 @@ def alterar_qtd_quartos():
     qtd_quartos_inicial = qtd_quartos_alt
 
 
+def casa_selecionada():
+    if casa_escolhida == 'Young':
+        young()
+    elif casa_escolhida == 'Prime Beach':
+        primebeach()
+    elif casa_escolhida == 'Family':
+        family()
+    elif casa_escolhida == 'Exclusive':
+        exclusive()
+    elif casa_escolhida == 'Dunas':
+        dunas()
+    elif casa_escolhida == 'Economics':
+        economics()
+    elif casa_escolhida == 'Slim':
+        slim()
+    elif casa_escolhida == 'Confort':
+        confort()
+    elif casa_escolhida == 'Fort Beach':
+        fortbeach()
+    elif casa_escolhida == 'Ocean Blue':
+        oceanblue()
+
+
 def soup(html_content):
     todos_os_precos = list()
     # Cria um objeto BeautifulSoup que pega o conteúdo da resposta e analisa/organiza
@@ -279,9 +514,7 @@ def soup(html_content):
     print(f'os preços são {precos}')
     global allprices
     allprices = todos_os_precos
-    # alterardata(dia_de_entrada, dia_de_saida)
-    # funcao das casas - temporario YOUNG
-    young()
+    casa_selecionada()
     entrada_das_datas()
     alterarpreco(allprices[int(posicao) - 1])
 
@@ -293,46 +526,6 @@ def fazer_requisicao(_checkin, _checkout):
     # condensa o conteúdo da resposta
     html_content = response.content
     soup(html_content)
-
-
-""" 
-
-def menu():
-    while True:
-        print(f'FILTROS ATUAIS: Estado > Rj / Cidade > Cabo Frio / Quartos > {qtd_quartos_inicial} /'
-              f' Adultos > {qtd_adultos_inicial} / Crianças > 0 / Ano > {ano} /'
-              f'Mês > {mes_num}')
-        print('-=' * 30)
-        print('{:^30}'.format('-=MENU=-'))
-        print('1- [Escolha as datas (CHECKIN E CHECKOUT)] ')
-        print(f'2- [TODOS os preços desse MÊS {mes_num} desse ano {ano}] ')
-        print('3- [Altere a quantidade de adultos] ')
-        print('4- [Altere a quantidade de quartos] ')
-        print('5- [Fechar programa]')
-        print('-=' * 30)
-        opcao = int(input('Digite sua opção: '))
-        if opcao == 1:
-            escolher_datas()
-        elif opcao == 2:
-            listar_precos_mes()
-        elif opcao == 3:
-            alterar_qtd_adultos()
-        elif opcao == 4:
-            alterar_qtd_quartos()
-        elif opcao == 5:
-            break
-        else:
-            print('Opção incorreta . Digite uma opção correta')
-
-
-def escolher_datas():
-    dia_entrada = int(input('Qual o dia de entrada [DD] ? '))
-    dia_saida = int(input('Qual o dia de saída [DD] ? '))
-    young()
-    # alterardata(dia_entrada, dia_saida)
-    entrada_das_datas()
-    fazer_requisicao(checkin(ano, mes_num, dia_entrada), checkout(ano, mes_num, dia_saida))
-"""
 
 
 def listar_precos_mes():
@@ -405,8 +598,8 @@ def entrar():
     senha = input_senha.get()
     logar_no_site()
     calendariogeral()
-    # Grid
 
+    # Grid
     texto2.grid(column=0, row=9)
     input_ano.grid(column=0, row=10)
     texto_mes.grid(column=0, row=11)
@@ -414,15 +607,22 @@ def entrar():
     txt_checkb.grid(column=0, row=13)
     checkbutton1.grid(column=0, row=14)
     checkbutton2.grid(column=0, row=15)
+
     # txt pos
     texto_pos = Label(janela, text="Qual posição você quer incluir o seu preço ?")
     texto_pos.grid(column=0, row=16)
+
     # Grid pos
     input_pos.grid(column=0, row=17)
+
     # espaço vazio
     espaco_vazio = Label(janela, text="")
     espaco_vazio.grid(column=0, row=18)
     botao_listar.grid(column=0, row=19)
+
+    global casa_escolhida
+    casa_escolhida = combobox.get()
+    print(casa_escolhida)
 
 
 def buttoncheck1():
@@ -471,7 +671,7 @@ txt_casa.grid(column=0, row=1)
 # combobox casas
 combobox = ttk.Combobox(janela, height=10)
 combobox['values'] = ('Slim', 'Young', 'Economics', 'Family', 'Dunas', 'Exclusive',
-                      'Bandeira', 'Fort Beach', 'Ocean Blue', 'Confort')
+                      'Prime Beach', 'Fort Beach', 'Ocean Blue', 'Confort')
 combobox.state(['readonly'])
 combobox.grid(column=0, row=2)
 
@@ -549,12 +749,4 @@ txt_diaria_value.grid(column=2, row=1)
 # fim da janela
 janela.mainloop()
 
-# mes_num = str(input('Escolha o mês [MM] : '))
-mes_abrev = 'nov'  # str(input('Escreva a abreviação do Mês [jan/fev/mar]: ')).lower()  # FAZER UMA LISTA COM OS
-# MESES LIDA POR MM (LINHA 282)
-# ano = int(input('Escolha o ano[AAAA] : '))
-
-# logar_no_site()
-# calendariogeral()
-# menu()
 input()
