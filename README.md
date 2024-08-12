@@ -9,7 +9,8 @@ O programa permite escolher as datas (dia/mês/ano) que eu quero pesquisar ou at
 <br/>
 
 ## :camera: Imagens 
-![image](https://github.com/user-attachments/assets/59355c79-df87-4f2d-8b2b-2a77674ae1c6)
+![image](https://github.com/user-attachments/assets/06e3abad-749e-46fb-a547-56ac8a4ef738)
+
 
 ## 🛠️ Funcionalidades
 
